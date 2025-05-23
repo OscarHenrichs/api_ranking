@@ -1,11 +1,13 @@
 <?php
 namespace Api\Routes\Router;
-use Api\Routes\UserRoute\UserRoute;
+use Api\Routes\RankingRoute\RankingRoute;
 
 class Router
 {
     private $requestPath;
     private $requestRoute;
+    private $requestParams;
+    private $requestBody;
     private $requestMethod;
 
     // Initialize routes when needed, not during property declaration
@@ -14,13 +16,15 @@ class Router
     public function __construct()
     {
         $this->routes = [
-            'users' => UserRoute::class
+            'ranking' => RankingRoute::class
         ];
     }
 
     public function route()
     {
         $this->getCurrentRoute();
+        $this->getRequestParams();
+        $this->getRequestBody();
         $this->getRequestMethod();
 
         if (empty($this->requestRoute)) {
@@ -31,14 +35,8 @@ class Router
         $route = trim($this->requestRoute[0], '/');
 
         switch ($route) {
-            case 'belezinha':
-                $this->sendResponse(200, ['message' => 'Belezinha']);
-                break;
-            case 'users':
-                UserRoute::switchRoute($this->requestPath, $this->requestMethod);
-                break;
-            case 'teste':
-                $this->sendResponse(code: 200, data: ['message' => 'Endpoint teste found: ' . $this->requestPath . " " . $route]);
+            case 'ranking':
+                RankingRoute::switchRoute($this->requestMethod, $this->requestPath, $this->requestParams, $this->requestBody);
                 break;
             default:
                 $this->sendResponse(code: 404, data: ['message' => 'Endpoint not found:' . $this->requestPath . " " . $route]);
@@ -48,6 +46,36 @@ class Router
     private function getRequestMethod()
     {
         $this->requestMethod = $_SERVER['REQUEST_METHOD'];
+    }
+
+
+    private function getRequestParams(): void
+    {
+        $queryString = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_QUERY);
+
+        if ($queryString === null) {
+            $this->requestParams = [];
+            return;
+        }
+
+        parse_str($queryString, $this->requestParams);
+    }
+
+    private function getRequestBody()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $_SERVER['REQUEST_METHOD'] !== 'PUT') {
+            return;
+        }
+        if (empty($_SERVER['CONTENT_TYPE']) || strpos($_SERVER['CONTENT_TYPE'], 'application/json') === false) {
+            throw new \Exception("Invalid Content-Type: " . $_SERVER['CONTENT_TYPE']);
+        }
+        if (empty(file_get_contents('php://input'))) {
+            throw new \Exception("Empty request body");
+        }
+        $this->requestBody = json_decode(file_get_contents('php://input'), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \Exception("Invalid JSON: " . json_last_error_msg());
+        }
     }
 
     private function getCurrentRoute()

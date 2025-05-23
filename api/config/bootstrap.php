@@ -24,12 +24,13 @@ try {
 }
 try {
     require_once ROOT_PATH . '/routes/router.php';
+    require_once ROOT_PATH . '/routes/rankingRoute.php';
+
 } catch (Exception $e) {
 
     echo json_encode(['error' => 'Failed to load router: ' . $e->getMessage()]);
     exit;
 }
-require_once ROOT_PATH . '/routes/userRoute.php';
 try {
     require_once ROOT_PATH . '/config/http.php';
 } catch (Exception $e) {

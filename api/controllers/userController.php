@@ -7,9 +7,30 @@ use Api\Database\Getters\UserModel;
 class UserController
 {
     // Get all Users
-    public function getRanking(array|null $params)
+    public function getRanking($params)
     {
-        $query = `SELECT 
+        $param = "";
+        if (isset($params["movement_id"]) && is_numeric($params["movement_id"])) {
+            if (!is_numeric($params["movement_id"])) {
+                http_response_code(400);
+                echo json_encode(['message' => 'Invalid movement id']);
+                return;
+            }
+            $param = " WHERE m.id = ? ";
+        }
+        if (isset($params["movement_name"])) {
+            if (is_numeric($params["movement_name"])) {
+                http_response_code(400);
+                echo json_encode(['message' => 'Invalid movement name']);
+                return;
+            }
+
+            $param = " WHERE m.name = '?' ";
+        }
+
+
+        $query = "
+                SELECT 
                         ranked_data.movement_name,
                         JSON_ARRAYAGG(
                             JSON_OBJECT(
@@ -27,27 +48,27 @@ class UserController
                         FROM 
                             personal_record pr
                             INNER JOIN movement m ON pr.movement_id = m.id
-                            INNER JOIN user u ON u.id = pr.user_id
-                        WHERE 
-                            m.id = 2
+                            INNER JOIN user u ON u.id = pr.user_id" . $param . "
+                       
                     ) AS ranked_data
                     GROUP BY 
-                    ranked_data.movement_name;`;
+                        ranked_data.movement_name;";
 
 
-        // $db = new Database();
-        // $stmt = $db->executeStatement($query);
+        $db = new Database();
+        $stmt = $db->executeStatement($query);
 
-        // $result = $stmt->get_result(); // Get the result set from mysqli
-        // $users = array();
+        $result = $stmt->get_result(); // Get the result set from mysqli
 
-        // while ($row = $result->fetch_assoc()) {
-
-        //     $user = UserModel::fromJson(json_encode($row));
-        //     array_push($items, $user);
-        // }
-
+        $row = $result->fetch_assoc();
+        $row = array_map('htmlspecialchars_decode', $row);
+        $json = json_encode($row, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        if ($json === false) {
+            http_response_code(500);
+            echo json_encode(['message' => 'Error encoding JSON']);
+            return;
+        }
         http_response_code(200);
-        echo json_encode($params);
+        echo $json;
     }
 }

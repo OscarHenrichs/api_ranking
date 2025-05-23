@@ -1,11 +1,12 @@
 <?php
-namespace Api\Routes\UserRoute;
+namespace Api\Routes\RankingRoute;
 
 use Api\Controllers\UserController\UserController;
-class UserRoute
+class RankingRoute
 {
-    public static function switchRoute($path, $requestMethod)
+    public static function switchRoute($requestMethod, $path, $params, $body)
     {
+
         $controller = new UserController();
         $routes = explode($path, '/') ?: '/';
         if (count($routes) > 1 && $routes[1] !== '') {
@@ -18,9 +19,7 @@ class UserRoute
                 $controller = new UserController();
                 switch ($requestMethod) {
                     case 'GET':
-                        
-                        parse_str($path, $queryArray);
-                        $controller->getRanking($queryArray);
+                        $controller->getRanking($params);
                         break;
                     default:
                         header("HTTP/1.1 405 Method Not Allowed");

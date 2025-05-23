@@ -59,6 +59,7 @@ class Database
 
     public function executeStatement(string $query = "", array $params = []): mysqli_stmt
     {
+
         $this->verifyConnection();
 
         $stmt = $this->connection->prepare($query);
