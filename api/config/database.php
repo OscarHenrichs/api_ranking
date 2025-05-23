@@ -29,6 +29,10 @@ class Database
         // if (getenv('DB_NAME') === false) {
         //     throw new Exception("Database environment variables not set.");
         // }
+        // if (getenv('DB_PORT') === false) {
+        //     throw new Exception("Database environment variables not set.");
+        // }
+
         $this->dbHost = 'localhost';
         $this->dbUser = 'root';
         $this->dbPass = null;

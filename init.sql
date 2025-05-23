@@ -1,19 +1,23 @@
+CREATE DATABASE IF NOT EXISTS api_ranking;
+USE api_ranking;
+
 START TRANSACTION;
 
 -- Create user table first since other tables reference it
-CREATE TABLE `user` (
+CREATE TABLE IF NOT EXISTS `user` (
     `id` int NOT NULL AUTO_INCREMENT,
     `name` varchar(255) NOT NULL,
     PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `movement` (
+
+CREATE TABLE IF NOT EXISTS `movement` (
     `id` int NOT NULL AUTO_INCREMENT,
     `name` varchar(255) NOT NULL,
     PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `personal_record` (
+CREATE TABLE IF NOT EXISTS `personal_record` (
     `id` int NOT NULL AUTO_INCREMENT,
     `user_id` int NOT NULL,
     `movement_id` int NOT NULL,

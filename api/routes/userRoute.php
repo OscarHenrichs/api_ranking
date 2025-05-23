@@ -18,7 +18,9 @@ class UserRoute
                 $controller = new UserController();
                 switch ($requestMethod) {
                     case 'GET':
-                        $controller->getAllItems();
+                        
+                        parse_str($path, $queryArray);
+                        $controller->getRanking($queryArray);
                         break;
                     default:
                         header("HTTP/1.1 405 Method Not Allowed");
