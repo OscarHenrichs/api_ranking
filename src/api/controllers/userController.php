@@ -59,7 +59,7 @@ class UserController
 
 
         $db = new Database();
-        $stmt = $db->executeStatement($query, [$param]);
+        $stmt = $db->executeQuery($query, [$param]);
 
         $result = $stmt->get_result();
 

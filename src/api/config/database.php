@@ -58,7 +58,7 @@ class Database
         }
     }
 
-    public function executeStatement(string $query = "", array $params = []): mysqli_stmt
+    public function executeQuery(string $query = "", array $params = []): mysqli_stmt
     {
 
         $params = SanitizeParameters::sanitizeParameters($params);
