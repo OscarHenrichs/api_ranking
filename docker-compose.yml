@@ -1,10 +1,13 @@
 services:
   web:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: php:8.2-apache
-    ports:
-      - "8088:8088"
     volumes:
-      - ./src:/var/www/html
+      - ./src:/var/www/html # Standard mount
+    ports:
+      - "8080:80" # Map host port 8080 to container port 80
     environment:
       - GIT_REPO=https://github.com/OscarHenrichs/api_ranking
       - GIT_BRANCH=main
@@ -13,6 +16,7 @@ services:
       - DB_PASSWORD=1234@Abc
       - DB_NAME=api_ranking
       - DB_PORT=3306
+
     depends_on:
       db:
         condition: service_healthy

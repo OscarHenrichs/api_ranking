@@ -9,6 +9,7 @@ class UserController
     // Get all Users
     public function getRanking($params)
     {
+        $where = "";
         $param = "";
         if (isset($params["movement_id"])) {
             if (!is_numeric($params["movement_id"])) {

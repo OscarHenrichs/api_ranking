@@ -69,9 +69,16 @@ class Database
             throw new Exception("Prepare failed: " . $this->connection->error);
         }
 
-        if (!empty($params)) {
+
+        if (!empty($params) && is_array($params) && count($params) > 0 && $params[0] !== null) {
             $types = str_repeat('s', count($params)); // default to string type
             $stmt->bind_param($types, ...$params);
+        } else if (is_string($params[0])) {
+            $stmt->bind_param('s', $params);
+        } else if (is_numeric($params)) {
+            $stmt->bind_param('d', $params);
+        } else if (is_bool($params)) {
+            $stmt->bind_param('i', $params);
         }
 
         if (!$stmt->execute()) {
