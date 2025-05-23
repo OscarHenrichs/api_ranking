@@ -1,13 +1,15 @@
 <?php
-namespace Api\Tools\ValidateParameters;
-class ValidateParameters
+namespace Api\Tools\SanitizeParameters;
+
+
+class SanitizeParameters
 {
 
     /**
      * @param array $params
      * @return array 
      */
-    public static function sanitizeParams($params = [])
+    public static function sanitizeParameters($params = [])
     {
         if (empty($params)) {
             return [];
@@ -15,10 +17,9 @@ class ValidateParameters
 
         foreach ($params as $key => $value) {
             if (is_array($value)) {
-                self::sanitizeParams($value);
+                self::sanitizeParameters($value);
             } else {
-                $params[$key] = htmlspecialchars(strip_tags(trim($value)));
-
+                $params[$key] = SanitizeParameters::sanitizeParam($value);
             }
         }
 
@@ -30,7 +31,7 @@ class ValidateParameters
      * @param dynamic $param
      * @return dynamic
      */
-    public static function sanitizeParam($param)
+    private static function sanitizeParam($param)
     {
 
         if (empty($param)) {

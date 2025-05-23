@@ -4,28 +4,21 @@ namespace Api\Routes\UserRoute;
 use Api\Controllers\UserController\UserController;
 class UserRoute
 {
-    public static function switchRoute($url, $requestMethod)
+    public static function switchRoute($path, $requestMethod)
     {
         $controller = new UserController();
-        $matches = [];
-        $url = trim($url, '/');
-
-        // Check if the URL matches the pattern
-
-
+        $routes = explode($path, '/') ?: '/';
+        if (count($routes) > 1 && $routes[1] !== '') {
+            $url = $routes[1];
+        } else {
+            $url = '';
+        }
         switch ($url) {
             case '':
                 $controller = new UserController();
-                $id = $matches[1];
                 switch ($requestMethod) {
                     case 'GET':
-                        $controller->getItem($id);
-                        break;
-                    case 'PUT':
-                        $controller->updateItem($id);
-                        break;
-                    case 'DELETE':
-                        $controller->deleteItem($id);
+                        $controller->getAllItems();
                         break;
                     default:
                         header("HTTP/1.1 405 Method Not Allowed");
@@ -33,15 +26,8 @@ class UserRoute
                         break;
                 }
                 break;
-            case preg_match('/([0-9]+)$/', $url, $matches) ? true : false:
-
+            case preg_match('/([0-9]+)$/', $path, $matches) ? true : false:
                 switch ($requestMethod) {
-                    case 'GET':
-                        $controller->getAllItems();
-                        break;
-                    case 'POST':
-                        $controller->createItem();
-                        break;
                     default:
                         header("HTTP/1.1 405 Method Not Allowed");
                         echo json_encode(['message' => 'Method not allowed']);
@@ -55,3 +41,4 @@ class UserRoute
         }
     }
 }
+?>

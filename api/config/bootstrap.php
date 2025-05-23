@@ -1,16 +1,46 @@
 <?php
 define("ROOT_PATH", realpath(dirname(__FILE__) . '/../'));
 
-// Verify the path exists
-if (!file_exists(ROOT_PATH)) {
-    die("Fatal Error: Root path not found - " . ROOT_PATH);
+try {
+    include ROOT_PATH . '/config/database.php';
+} catch (Exception $e) {
+
+    echo json_encode(['error' => 'Failed to load Database: ' . $e->getMessage()]);
+    exit;
+}
+try {
+    require_once ROOT_PATH . '/models/userModel.php';
+} catch (Exception $e) {
+
+    echo json_encode(['error' => 'Failed to load Models: ' . $e->getMessage()]);
+    exit;
+}
+try {
+    require_once ROOT_PATH . '/controllers/userController.php';
+} catch (Exception $e) {
+
+    echo json_encode(['error' => 'Failed to load controllers: ' . $e->getMessage()]);
+    exit;
+}
+try {
+    require_once ROOT_PATH . '/routes/router.php';
+} catch (Exception $e) {
+
+    echo json_encode(['error' => 'Failed to load router: ' . $e->getMessage()]);
+    exit;
+}
+require_once ROOT_PATH . '/routes/userRoute.php';
+try {
+    require_once ROOT_PATH . '/config/http.php';
+} catch (Exception $e) {
+    echo json_encode(['error' => 'Failed to load HTTP configuration: ' . $e->getMessage()]);
+    exit;
 }
 
-spl_autoload_register(function ($class_name) {
-    include ROOT_PATH . '/models/' . $class_name . '.php';
-    include ROOT_PATH . '/controllers/' . $class_name . '.php';
-    include ROOT_PATH . '/routes/' . $class_name . '.php';
-});
-
-require_once ROOT_PATH . '/configs/database.php';
+try {
+    require_once ROOT_PATH . '/tools/sanitizeParameters.php';
+} catch (Exception $e) {
+    echo json_encode(['error' => 'Failed to load Tools' . $e->getMessage()]);
+    exit;
+}
 ?>
