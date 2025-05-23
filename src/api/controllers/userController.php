@@ -51,7 +51,9 @@ class UserController
                         FROM 
                             personal_record pr
                             INNER JOIN movement m ON pr.movement_id = m.id
-                            INNER JOIN user u ON u.id = pr.user_id" . $where . "
+                            INNER JOIN user u ON u.id = pr.user_id" . $where . " 
+                        ORDER BY
+                            m.name, pr.value DESC
                        
                     ) AS ranked_data
                     GROUP BY 
