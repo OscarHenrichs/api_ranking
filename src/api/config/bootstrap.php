@@ -9,7 +9,8 @@ try {
     exit;
 }
 try {
-    require_once ROOT_PATH . '/models/userModel.php';
+    require_once ROOT_PATH . '/models/baseModel.php';
+    require_once ROOT_PATH . '/models/rankingModel.php';
 } catch (Exception $e) {
 
     echo json_encode(['error' => 'Failed to load Models: ' . $e->getMessage()]);

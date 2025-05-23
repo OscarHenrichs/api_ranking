@@ -4,6 +4,14 @@ namespace Api\Routes\RankingRoute;
 use Api\Controllers\UserController\UserController;
 class RankingRoute
 {
+
+    /**
+     * @param mixed $requestMethod
+     * @param mixed $path
+     * @param mixed $params
+     * @param mixed $body
+     * @return void
+     */
     public static function switchRoute($requestMethod, $path, $params, $body)
     {
 

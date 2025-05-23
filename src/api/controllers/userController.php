@@ -61,10 +61,13 @@ class UserController
         $db = new Database();
         $stmt = $db->executeStatement($query, [$param]);
 
-        $result = $stmt->get_result(); // Get the result set from mysqli
+        $result = $stmt->get_result();
 
-        $row = $result->fetch_assoc();
-        $json = json_encode($row, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $row = $result->fetch_object();
+        if (isset($row->ranking)) {
+            $row->ranking = json_decode($row->ranking);
+        }
+        $json = json_encode($row, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         if ($json === false) {
             http_response_code(500);
             echo json_encode(['message' => 'Error encoding JSON']);
