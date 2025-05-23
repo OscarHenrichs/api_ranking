@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  web:
+    image: php:8.2-apache
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+
+    environment:
+      - GIT_REPO=https://github.com/OscarHenrichs/api_ranking
+      - GIT_BRANCH=main
+      - DB_HOST=root
+      - DB_USER=developer
+      - DB_PASSWORD=1234@Abc
+      - DB_NAME=api_ranking
+
+    depends_on:
+      db:
+      condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql
+    environment:
+      DB_ROOT_PASSWORD: 1234@root
+      DB_DATABASE: api_ranking
+      DB_USER: developer
+      DB_PASSWORD: 1234@Abc
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
