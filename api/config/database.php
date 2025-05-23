@@ -1,6 +1,7 @@
 <?php
 namespace Api\Database;
 
+use Api\Tools\SanitizeParameters\SanitizeParameters;
 use Exception;
 use mysqli;
 use mysqli_stmt;
@@ -60,6 +61,7 @@ class Database
     public function executeStatement(string $query = "", array $params = []): mysqli_stmt
     {
 
+        $params = SanitizeParameters::sanitizeParameters($params);
         $this->verifyConnection();
 
         $stmt = $this->connection->prepare($query);

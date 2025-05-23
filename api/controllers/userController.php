@@ -10,13 +10,14 @@ class UserController
     public function getRanking($params)
     {
         $param = "";
-        if (isset($params["movement_id"]) && is_numeric($params["movement_id"])) {
+        if (isset($params["movement_id"])) {
             if (!is_numeric($params["movement_id"])) {
                 http_response_code(400);
                 echo json_encode(['message' => 'Invalid movement id']);
                 return;
             }
-            $param = " WHERE m.id = ? ";
+            $where = " WHERE m.id = ? ";
+            $param = $params["movement_id"];
         }
         if (isset($params["movement_name"])) {
             if (is_numeric($params["movement_name"])) {
@@ -25,7 +26,8 @@ class UserController
                 return;
             }
 
-            $param = " WHERE m.name = '?' ";
+            $where = " WHERE m.name = ? ";
+            $param = $params["movement_name"];
         }
 
 
@@ -48,7 +50,7 @@ class UserController
                         FROM 
                             personal_record pr
                             INNER JOIN movement m ON pr.movement_id = m.id
-                            INNER JOIN user u ON u.id = pr.user_id" . $param . "
+                            INNER JOIN user u ON u.id = pr.user_id" . $where . "
                        
                     ) AS ranked_data
                     GROUP BY 
@@ -56,12 +58,11 @@ class UserController
 
 
         $db = new Database();
-        $stmt = $db->executeStatement($query);
+        $stmt = $db->executeStatement($query, [$param]);
 
         $result = $stmt->get_result(); // Get the result set from mysqli
 
         $row = $result->fetch_assoc();
-        $row = array_map('htmlspecialchars_decode', $row);
         $json = json_encode($row, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         if ($json === false) {
             http_response_code(500);
