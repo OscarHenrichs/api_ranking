@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     image: php:8.2-apache
     volumes:
-      - ./src:/var/www/html # Standard mount
+      - ./src:/var/www/html
     ports:
       - "8080:80" # Map host port 8080 to container port 80
     environment:
